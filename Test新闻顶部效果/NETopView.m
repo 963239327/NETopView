@@ -44,10 +44,10 @@ static NSString *const kFrame = @"frame";
         
         CGFloat alpha = originY / ((CGRectGetHeight(self.frame)-64)/2);
         self.avatar.alpha = 1 - alpha;
-        if (alpha >= 1.0) {
+        if (alpha >= 1.0) { // 原本的控件逐渐变透明
             self.nameLabel.center = CGPointMake(ScreenWidth/2, CGRectGetHeight(self.frame)-CGRectGetHeight(self.nameLabel.frame)/2-10);
             self.nameLabel.alpha = alpha - 1;
-        } else {
+        } else { // 原本的控件已经完全透明了，产生一个新的（其实用的还是旧的控件，只不过把frame改了）
             self.nameLabel.center = CGPointMake(ScreenWidth/2, CGRectGetMaxY(self.avatar.frame)+20);
             self.nameLabel.alpha = 1 - alpha;
         }

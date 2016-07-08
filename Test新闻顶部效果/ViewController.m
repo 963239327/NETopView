@@ -43,28 +43,26 @@ static NSString *const kContentOffset = @"contentOffset";
 
 #pragma mark - KVO
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context {
-    if ([keyPath isEqualToString:kContentOffset]) {
-        [self.tableView removeObserver:self forKeyPath:kContentOffset];
+    if ([keyPath isEqualToString:kContentOffset]) { // 监听的是contentOffset的变化
+        [self.tableView removeObserver:self forKeyPath:kContentOffset]; // 这里需要先移除监听，否则会导致死循环
         
-        CGFloat newY = self.tableView.contentOffset.y;
-        CGFloat topY = CGRectGetHeight(self.topView.frame);
+        CGFloat newY = self.tableView.contentOffset.y; // 获取划动的contentOffset的y值
+        CGFloat topY = CGRectGetHeight(self.topView.frame); // topView的高度
         NSLog(@"newY = %f, topY = %f", newY, topY);
         
-        if (newY <= 0) { // 在底部，此时只有table动
+        if (newY <= 0) { // topView在底部，此时只有tableView动
             NSLog(@"-------------------------------111");
             self.tableView.frame = CGRectMake(0, topY, ScreenWidth, ScreenHeight-topY);
-            self.topView.frame = CGRectMake(0, 0, ScreenWidth, topY);
-        } else if (newY > 0 && newY < topY-64) { // 在中间，两者都动
+        } else if (newY > 0 && newY < topY-64) { // topView在中间，两者都动
             NSLog(@"-------------------------------222");
             self.tableView.frame = CGRectMake(0, topY-newY, ScreenWidth, ScreenHeight-(topY-newY));
             self.topView.frame = CGRectMake(0, -newY, ScreenWidth, topY);
-        } else if (newY >= topY-64) { // 在顶部，此时只有table动	
+        } else if (newY >= topY-64) { // topView在顶部，此时只有tableView动
             NSLog(@"-------------------------------333");
             self.tableView.frame = CGRectMake(0, 64, ScreenWidth, ScreenHeight-64);
-            self.topView.frame = CGRectMake(0, 64-topY, ScreenWidth, topY);
         }
 
-        [self.tableView addObserver:self forKeyPath:kContentOffset options:0 context:nil];
+        [self.tableView addObserver:self forKeyPath:kContentOffset options:0 context:nil]; // 结束后再添加监听
     }
 }
 
