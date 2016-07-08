@@ -48,17 +48,14 @@ static NSString *const kContentOffset = @"contentOffset";
         
         CGFloat newY = self.tableView.contentOffset.y; // 获取划动的contentOffset的y值
         CGFloat topY = CGRectGetHeight(self.topView.frame); // topView的高度
-        NSLog(@"newY = %f, topY = %f", newY, topY);
+//        NSLog(@"newY = %f, topY = %f", newY, topY);
         
         if (newY <= 0) { // topView在底部，此时只有tableView动
-            NSLog(@"-------------------------------111");
             self.tableView.frame = CGRectMake(0, topY, ScreenWidth, ScreenHeight-topY);
         } else if (newY > 0 && newY < topY-64) { // topView在中间，两者都动
-            NSLog(@"-------------------------------222");
             self.tableView.frame = CGRectMake(0, topY-newY, ScreenWidth, ScreenHeight-(topY-newY));
             self.topView.frame = CGRectMake(0, -newY, ScreenWidth, topY);
         } else if (newY >= topY-64) { // topView在顶部，此时只有tableView动
-            NSLog(@"-------------------------------333");
             self.tableView.frame = CGRectMake(0, 64, ScreenWidth, ScreenHeight-64);
         }
 

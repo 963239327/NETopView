@@ -40,7 +40,7 @@ static NSString *const kFrame = @"frame";
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context {
     if ([keyPath isEqualToString:kFrame]) {
         CGFloat originY = -self.frame.origin.y;
-        NSLog(@"^^^^^ originY = %f", originY);
+//        NSLog(@"^^^^^ originY = %f", originY);
         
         CGFloat alpha = originY / ((CGRectGetHeight(self.frame)-64)/2);
         self.avatar.alpha = 1 - alpha;
