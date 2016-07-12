@@ -38,6 +38,13 @@
 }
 
 #pragma mark - getter && setter
+- (void)setModel:(NEModel *)model {
+    _model = model;
+    _avatar.image = [UIImage imageNamed:model.imgPath];
+    _nameLabel.text = model.nickname;
+    _contentLabel.text = model.content;
+}
+
 - (UIImageView *)avatar {
     if (!_avatar) {
         _avatar = [[UIImageView alloc] init];
@@ -57,13 +64,6 @@
         _contentLabel = [[UILabel alloc] init];
     }
     return _contentLabel;
-}
-
-- (void)setModel:(NEModel *)model {
-    _model = model;
-    _avatar.image = [UIImage imageNamed:model.imgPath];
-    _nameLabel.text = model.nickname;
-    _contentLabel.text = model.content;
 }
 
 @end
