@@ -58,6 +58,11 @@ static NSString *const kContentOffset = @"contentOffset";
         } else if (newY >= topY-64) { // topView在顶部，此时只有tableView动
             self.tableView.frame = CGRectMake(0, 64, ScreenWidth, ScreenHeight-64);
         }
+        
+        // 防止topView和tableView之间出现一小段空档
+        if (self.tableView.frame.origin.y >= 200) {
+            self.topView.frame = CGRectMake(0, 0, ScreenWidth, self.topView.frame.size.height);
+        }
 
         [self.tableView addObserver:self forKeyPath:kContentOffset options:0 context:nil]; // 结束后再添加监听
     }
