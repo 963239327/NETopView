@@ -44,24 +44,25 @@ static NSString *const kContentOffset = @"contentOffset";
 #pragma mark - KVO
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context {
     if ([keyPath isEqualToString:kContentOffset]) { // 监听的是contentOffset的变化
-        [self.tableView removeObserver:self forKeyPath:kContentOffset]; // 这里需要先移除监听，否则会导致死循环
-        
         CGFloat newY = self.tableView.contentOffset.y; // 获取划动的contentOffset的y值
         CGFloat topY = CGRectGetHeight(self.topView.frame); // topView的高度
 //        NSLog(@"newY = %f, topY = %f", newY, topY);
         
+        if (self.tableView.contentSize.height - newY <= ScreenHeight - topY + fmin(newY, topY-64)) { // table已经滑到底部了，直接返回
+            return ;
+        }
+        
+        [self.tableView removeObserver:self forKeyPath:kContentOffset];
+        
         if (newY <= 0) { // topView在底部，此时只有tableView动
             self.tableView.frame = CGRectMake(0, topY, ScreenWidth, ScreenHeight-topY);
+            self.topView.frame = CGRectMake(0, 0, ScreenWidth, topY);
         } else if (newY > 0 && newY < topY-64) { // topView在中间，两者都动
             self.tableView.frame = CGRectMake(0, topY-newY, ScreenWidth, ScreenHeight-(topY-newY));
             self.topView.frame = CGRectMake(0, -newY, ScreenWidth, topY);
         } else if (newY >= topY-64) { // topView在顶部，此时只有tableView动
             self.tableView.frame = CGRectMake(0, 64, ScreenWidth, ScreenHeight-64);
-        }
-        
-        // 防止topView和tableView之间出现一小段空档
-        if (self.tableView.frame.origin.y >= 200) {
-            self.topView.frame = CGRectMake(0, 0, ScreenWidth, self.topView.frame.size.height);
+            self.topView.frame = CGRectMake(0, 64-topY, ScreenWidth, topY);
         }
 
         [self.tableView addObserver:self forKeyPath:kContentOffset options:0 context:nil]; // 结束后再添加监听
@@ -97,6 +98,7 @@ static NSString *const kContentOffset = @"contentOffset";
         _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(self.topView.frame), self.view.frame.size.width, self.view.frame.size.height - self.topView.frame.size.height)];
         _tableView.delegate = self;
         _tableView.dataSource = self;
+        _tableView.bounces = NO;
         [_tableView registerClass:[NETableViewCell class] forCellReuseIdentifier:ideNETableViewCellReuseId];
     }
     return _tableView;
